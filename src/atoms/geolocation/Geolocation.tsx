@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
+import { Button } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 
 import { useGeolocated } from 'react-geolocated';
-import Container from 'react-bootstrap/Container';
-import { Button } from 'react-bootstrap';
+import { Coordinates } from 'src/components/locationInput/LocationInput';
 
 interface Props {
-  handleGetCoordinates?: () => void;
+  handleGetCoordinates?: (coordinates: Coordinates) => void;
 }
 
 const Geolocation: React.FC<Props> = props => {
@@ -13,25 +14,29 @@ const Geolocation: React.FC<Props> = props => {
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
     useGeolocated({
       positionOptions: {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
       },
       userDecisionTimeout: 5000,
     });
   const getCoordinates = useCallback(() => {
-    if (handleGetCoordinates) {
-      handleGetCoordinates();
+    if (handleGetCoordinates && coords) {
+      handleGetCoordinates(coords);
     }
-  }, [handleGetCoordinates]);
+  }, [coords, handleGetCoordinates]);
 
   return !isGeolocationAvailable ? (
-    <div>Your browser does not support Geolocation</div>
+    <Container className={'d-flex justify-content-center mb-4'}>
+      Your browser does not support Geolocation
+    </Container>
   ) : !isGeolocationEnabled ? (
-    <div>Geolocation is not enabled</div>
+    <Container className={'d-flex justify-content-center mb-3'}>
+      Geolocation is not enabled
+    </Container>
   ) : coords ? (
     <>
-      <Container className={'d-flex justify-content-center'}>OR</Container>
+      <Container className={'d-flex justify-content-center mb-1'}>OR</Container>
 
-      <Container className={'d-flex justify-content-center mb-4'}>
+      <Container className={'d-flex justify-content-center mb-3'}>
         <Button
           variant='primary rounded-pill'
           type='submit'
@@ -42,7 +47,9 @@ const Geolocation: React.FC<Props> = props => {
       </Container>
     </>
   ) : (
-    <div>Getting the location data&hellip; </div>
+    <Container className={'d-flex justify-content-center mb-4'}>
+      Getting the location data
+    </Container>
   );
 };
 
