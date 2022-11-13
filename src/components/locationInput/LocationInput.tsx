@@ -1,15 +1,23 @@
 import React, { FormEvent, useCallback, useState } from 'react';
 import { Button, FloatingLabel, Form } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
+import Geolocation from '../../atoms/geolocation/Geolocation';
 
 interface Props {
   onChange?: () => void;
   onSubmit?: () => void;
 }
 
+// interface Coordinates {
+//   latitude?: string;
+//   longitude?: string;
+// }
+
 const LocationInput: React.FC<Props> = props => {
   const [location, setLocation] = useState<string>('');
-  const [toShow, setToShow] = useState<string>('');
+  // const [coordinates, setCoordinates] = useState({});
+
+  // const handleGetCoordinates = () => {};
 
   const handleChange = useCallback((event: FormEvent) => {
     event.preventDefault();
@@ -21,7 +29,7 @@ const LocationInput: React.FC<Props> = props => {
   const handleSubmit = useCallback(
     (event: FormEvent) => {
       event.preventDefault();
-      setToShow(location);
+      console.log(location);
     },
     [location]
   );
@@ -41,20 +49,16 @@ const LocationInput: React.FC<Props> = props => {
               placeholder='Warsaw'
               onChange={handleChange}
             />
-            <Form.Text className='text-muted'>
-              Enter here coordinates or city name
-            </Form.Text>
+            <Form.Text className='text-muted'>Enter here coordinates</Form.Text>
           </FloatingLabel>
         </Container>
+        <Geolocation />
         <Container className={'d-flex justify-content-center'}>
-          <Button variant='primary' type='submit'>
+          <Button className={'btn-lg'} variant='primary' type='submit'>
             Submit
           </Button>
         </Container>
       </Form>
-      <div className='d-flex justify-content-center mt-3 fw-bold display-6'>
-        {toShow}
-      </div>
     </>
   );
 };
