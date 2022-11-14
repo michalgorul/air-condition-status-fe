@@ -61,7 +61,6 @@ const LocationInput: React.FC<Props> = props => {
     setBlur(false);
   }, []);
 
-  //TODO: add onBlur and onFocus functions to make proper handling of displaying errors
   return (
     <>
       <Form onSubmit={handleSubmit}>
