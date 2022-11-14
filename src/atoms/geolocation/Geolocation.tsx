@@ -37,11 +37,7 @@ const Geolocation: React.FC<Props> = props => {
       <Container className={'d-flex justify-content-center mb-1'}>OR</Container>
 
       <Container className={'d-flex justify-content-center mb-3'}>
-        <Button
-          variant='primary rounded-pill'
-          type='submit'
-          onClick={getCoordinates}
-        >
+        <Button variant='primary rounded-pill' onClick={getCoordinates}>
           Get location from browser
         </Button>
       </Container>

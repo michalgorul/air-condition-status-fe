@@ -15,20 +15,12 @@ export interface Coordinates {
 
 const LocationInput: React.FC<Props> = props => {
   const [location, setLocation] = useState<string>('');
-  const [coordinates, setCoordinates] = useState<Coordinates>({});
   const [error, setError] = useState<string>('');
   const [blur, setBlur] = useState<boolean>(false);
 
-  const handleGetCoordinates = useCallback(
-    (coords: Coordinates) => {
-      setCoordinates({
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-      });
-      setLocation(`${coordinates.latitude}, ${coordinates.longitude}`);
-    },
-    [coordinates]
-  );
+  const handleGetCoordinates = useCallback((coords: Coordinates) => {
+    setLocation(`${coords.latitude}, ${coords.longitude}`);
+  }, []);
 
   const handleChange = useCallback((event: FormEvent) => {
     event.preventDefault();
