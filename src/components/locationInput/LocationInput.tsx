@@ -17,6 +17,8 @@ const LocationInput: React.FC<Props> = props => {
   const [location, setLocation] = useState<string>('');
   const [coordinates, setCoordinates] = useState<Coordinates>({});
   const [error, setError] = useState<string>('');
+  const [blur, setBlur] = useState<boolean>(false);
+
   const handleGetCoordinates = useCallback(
     (coords: Coordinates) => {
       setCoordinates({
@@ -37,21 +39,36 @@ const LocationInput: React.FC<Props> = props => {
 
   const validate = useCallback(() => {
     if (!location) {
-      setError('Required');
-    } else if (location.length > 15) {
-      setError('Must be 15 characters or less');
+      setError('Input is required');
+      return;
+    }
+    const regExpMatchArray = location.match(
+      '^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$'
+    );
+    if (!regExpMatchArray) {
+      setError('Latitude and longitude must be entered separated by coma');
     } else setError('');
-    return error;
-  }, [error, location]);
+  }, [location]);
 
   const handleSubmit = useCallback(
     (event: FormEvent) => {
-      event.preventDefault();
       validate();
+      event.preventDefault();
+      if (error) return;
       console.log(location);
     },
-    [location, validate]
+    [error, location, validate]
   );
+
+  const handleBlur = useCallback(() => {
+    setBlur(true);
+    validate();
+  }, [validate]);
+
+  const handleFocus = useCallback(() => {
+    setBlur(false);
+  }, []);
+
   //TODO: add onBlur and onFocus functions to make proper handling of displaying errors
   return (
     <>
@@ -60,18 +77,20 @@ const LocationInput: React.FC<Props> = props => {
           <FloatingLabel
             controlId='floatingInput'
             label='Location'
-            className='mb-3'
+            className='mb-1'
           >
             <Form.Control
               size={'lg'}
               type='text'
               value={location}
               onChange={handleChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
             <Form.Text className='text-muted'>Enter coordinates</Form.Text>
           </FloatingLabel>
         </Container>
-        {error ? (
+        {error && blur ? (
           <Container className='d-flex justify-content-center text-danger'>
             {error}
           </Container>
