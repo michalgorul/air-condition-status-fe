@@ -61,6 +61,12 @@ const LocationInput: React.FC<Props> = props => {
     setBlur(false);
   }, []);
 
+  //TODO: Add other API functions
+
+  // getAvailableStates('Poland').then(res => console.log(res.data));
+  // getAvailableCities('Poland', 'Silesia').then(res => console.log(res.data));
+  // getNearestCityData().then(res => console.log(res.data));
+
   return (
     <>
       <Form onSubmit={handleSubmit}>
