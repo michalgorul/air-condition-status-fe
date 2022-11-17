@@ -1,12 +1,15 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 
-interface Props {}
+interface Props {
+  title: string;
+}
 
 const Title: React.FC<Props> = props => {
+  const { title } = props;
   return (
     <Container className='d-flex justify-content-center mb-5 mt-5'>
-      <h1 className='display-1 fw-bold'>Air Condition Status</h1>
+      <h1 className='display-1 fw-bold'>{title}</h1>
     </Container>
   );
 };

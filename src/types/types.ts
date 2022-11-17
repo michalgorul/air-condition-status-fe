@@ -43,3 +43,13 @@ export interface ResponseList {
   totalElements: number;
   data: string[];
 }
+
+export interface City {
+  city: string;
+  state: string;
+}
+
+export interface CitiesCategorized {
+  cities: City[];
+  country: string;
+}
