@@ -13,6 +13,7 @@ interface Props {}
 const WeatherPollutionState: React.FC<Props> = () => {
   const { country, state, city } = useParams();
   const [cityData, setCityData] = useState<WeatherDataResponse>();
+  const [requestSent, setRequestSent] = useState(false);
   const getCity = useCallback(() => {
     getCityData(country || '', state || '', city || '').then(response => {
       setCityData(response.data);
@@ -20,8 +21,11 @@ const WeatherPollutionState: React.FC<Props> = () => {
   }, [city, country, state]);
 
   useEffect(() => {
-    getCity();
-  }, [cityData, getCity]);
+    if (!requestSent) {
+      setRequestSent(true);
+      getCity();
+    }
+  }, [cityData, getCity, requestSent]);
   return (
     <>
       <HomeButton

@@ -15,9 +15,10 @@ const Weather: React.FC<Props> = props => {
     const timestampString = weather?.timestamp
       ? new Date(weather?.timestamp).toLocaleDateString()
       : '';
-    const temperature = weather?.temperature
-      ? weather?.temperature.toString() + '°'
-      : '';
+    const temperature =
+      weather?.temperature || weather?.temperature === 0
+        ? weather?.temperature.toString() + '°'
+        : '';
     return (
       <Table striped bordered hover>
         <thead>
