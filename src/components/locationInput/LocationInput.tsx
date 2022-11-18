@@ -15,7 +15,7 @@ export interface Coordinates {
   longitude?: number;
 }
 
-const LocationInput: React.FC<Props> = props => {
+const LocationInput: React.FC<Props> = () => {
   const navigate = useNavigate();
   const [location, setLocation] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -51,17 +51,12 @@ const LocationInput: React.FC<Props> = props => {
       event.preventDefault();
       if (error) return;
       const [lat, lon] = location.split(',');
-      getCityDataCoordinates(lat.trim(), lon.trim())
-        .then(weatherData => {
-          console.log(weatherData);
-          return weatherData;
-        })
-        .then(weatherData =>
-          navigate(
-            `/cities/${weatherData.data.data.country}/${weatherData.data.data.state}/${weatherData.data.data.city}`,
-            { state: weatherData }
-          )
+      getCityDataCoordinates(lat.trim(), lon.trim()).then(response => {
+        navigate(
+          `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
+          { state: { weather: response.data } }
         );
+      });
     },
     [error, location, navigate, validate]
   );

@@ -10,7 +10,10 @@ const MainDisplay: React.FC<Props> = () => {
     <>
       <Container className='d-flex justify-content-end mt-4 me-0'>
         <NavLink href={'/cities'}>
-          <Button className={'btn-sm'}>Available Cities</Button>
+          <Button className={'btn-sm me-2'}>Available Cities</Button>
+        </NavLink>
+        <NavLink href={'/info'}>
+          <Button className={'btn-sm'}>Info</Button>
         </NavLink>
       </Container>
       <Title title={'Air Condition Status'} />

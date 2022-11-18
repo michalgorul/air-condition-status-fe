@@ -8,7 +8,7 @@ interface Props {
 const Title: React.FC<Props> = props => {
   const { title } = props;
   return (
-    <Container className='d-flex justify-content-center mb-5 mt-5'>
+    <Container className='d-flex justify-content-center text-center mb-5 mt-5'>
       <h1 className='display-1 fw-bold'>{title}</h1>
     </Container>
   );

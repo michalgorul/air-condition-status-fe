@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import Container from 'react-bootstrap/Container';
 import { WeatherDataResponse } from 'src/types/types';
-import { Row, Table } from 'react-bootstrap';
+import { Col, Row, Table } from 'react-bootstrap';
 
 interface Props {
   data?: WeatherDataResponse;
@@ -63,11 +63,15 @@ const Weather: React.FC<Props> = props => {
     <>
       <Container className='d-flex justify-content-center mb-4'>
         <Row>
-          <h3>Weather</h3>
+          <h2>Weather</h2>
         </Row>
       </Container>
-      <Container className='d-flex justify-content-center mb-4'>
-        {listValues}
+      <Container>
+        <Row className='d-flex justify-content-center mb-4'>
+          <Col sm={12} md={8} xl={6}>
+            {listValues}
+          </Col>
+        </Row>
       </Container>
     </>
   );

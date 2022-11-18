@@ -1,31 +1,27 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import Title from 'src/atoms/title/Title';
+import { Button, Container, NavLink } from 'react-bootstrap';
+import { useLocation, useParams } from 'react-router-dom';
+import getCityData from 'src/api/iqAir/getCityData';
 import HomeButton from 'src/atoms/homeButton/HomeButton';
-import Weather from 'src/components/weather/Weather';
+import Title from 'src/atoms/title/Title';
 import Pollution from 'src/components/pollution/Pollution';
+import Weather from 'src/components/weather/Weather';
 import { WeatherDataResponse } from 'src/types/types';
-// import getCityData from 'src/api/iqAir/getCityData';
-import { useLocation } from 'react-router-dom';
-import { Button, NavLink } from 'react-bootstrap';
 
 interface Props {}
 
 const WeatherPollutionState: React.FC<Props> = () => {
   const { state } = useLocation();
-  // const { country, state, city } = useParams();
+  const { country, state: cityState, city } = useParams();
   const [cityData, setCityData] = useState<WeatherDataResponse>();
   const [requestSent, setRequestSent] = useState(false);
   const getCity = useCallback(() => {
-    console.log(state);
     if (!state) {
-      // getCityData(country || '', state || '', city || '').then(response => {
-      //   setCityData(response.data);
-      // });
-    } else {
-      // console.log(location.state.weatherData);
-      // setCityData(location.state.weatherData);
-    }
-  }, [state]);
+      getCityData(country || '', cityState || '', city || '').then(response => {
+        setCityData(response.data);
+      });
+    } else setCityData(state.weather);
+  }, [city, cityState, country, state]);
 
   useEffect(() => {
     if (!requestSent) {
@@ -43,6 +39,10 @@ const WeatherPollutionState: React.FC<Props> = () => {
         }
       />
       <Title title={'Weather and Pollution State'} />
+
+      <Container className='d-flex justify-content-center mt-4 mb-4 text-white text-center display-5'>
+        Conditions in {city}, {cityState}, {country}
+      </Container>
       <Weather data={cityData} />
       <Pollution data={cityData} />
     </>
