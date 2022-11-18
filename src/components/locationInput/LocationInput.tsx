@@ -2,6 +2,8 @@ import React, { FormEvent, useCallback, useState } from 'react';
 import { Button, FloatingLabel, Form } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Geolocation from 'src/atoms/geolocation/Geolocation';
+import getCityDataCoordinates from 'src/api/iqAir/getCityDataCoordinates';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   onChange?: () => void;
@@ -14,6 +16,7 @@ export interface Coordinates {
 }
 
 const LocationInput: React.FC<Props> = props => {
+  const navigate = useNavigate();
   const [location, setLocation] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [blur, setBlur] = useState<boolean>(false);
@@ -47,9 +50,20 @@ const LocationInput: React.FC<Props> = props => {
       validate();
       event.preventDefault();
       if (error) return;
-      console.log(location);
+      const [lat, lon] = location.split(',');
+      getCityDataCoordinates(lat.trim(), lon.trim())
+        .then(weatherData => {
+          console.log(weatherData);
+          return weatherData;
+        })
+        .then(weatherData =>
+          navigate(
+            `/cities/${weatherData.data.data.country}/${weatherData.data.data.state}/${weatherData.data.data.city}`,
+            { state: weatherData }
+          )
+        );
     },
-    [error, location, validate]
+    [error, location, navigate, validate]
   );
 
   const handleBlur = useCallback(() => {
@@ -60,12 +74,6 @@ const LocationInput: React.FC<Props> = props => {
   const handleFocus = useCallback(() => {
     setBlur(false);
   }, []);
-
-  //TODO: Add other API functions
-
-  // getAvailableStates('Poland').then(res => console.log(res.data));
-  // getAvailableCities('Poland', 'Silesia').then(res => console.log(res.data));
-  // getNearestCityData().then(res => console.log(res.data));
 
   return (
     <>
