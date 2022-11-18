@@ -15,6 +15,7 @@ export interface Coordinates {
   longitude?: number;
 }
 
+//TODO fix double click
 const LocationInput: React.FC<Props> = () => {
   const navigate = useNavigate();
   const [location, setLocation] = useState<string>('');

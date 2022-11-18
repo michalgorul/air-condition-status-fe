@@ -165,7 +165,7 @@ const Info = () => {
               <strong>0 – 35</strong>
             </td>
             <td>
-              <strong>Good </strong>
+              <strong>Excellent </strong>
             </td>
             <td>
               <strong>Green </strong>
@@ -179,7 +179,7 @@ const Info = () => {
               <strong>35 – 75</strong>
             </td>
             <td>
-              <strong>Moderate</strong>
+              <strong>Good</strong>
             </td>
             <td>
               <strong>Yellow </strong>
@@ -193,7 +193,7 @@ const Info = () => {
               <strong>75 – 115</strong>
             </td>
             <td>
-              <strong>Unhealthy for Sensitive Groups</strong>
+              <strong>Lightly Polluted </strong>
             </td>
             <td>
               <strong>Orange</strong>
@@ -207,7 +207,7 @@ const Info = () => {
               <strong>115 – 150</strong>
             </td>
             <td>
-              <strong>Unhealthy </strong>
+              <strong>Moderately Polluted </strong>
             </td>
             <td>
               <strong>Red</strong>
@@ -221,7 +221,7 @@ const Info = () => {
               <strong>150 – 250</strong>
             </td>
             <td>
-              <strong>Very Unhealthy</strong>
+              <strong>Heavily Polluted </strong>
             </td>
             <td>
               <strong>Purple</strong>
@@ -235,7 +235,7 @@ const Info = () => {
               <strong>250 – 500</strong>
             </td>
             <td>
-              <strong>Hazardous</strong>
+              <strong>Severely Polluted </strong>
             </td>
             <td>
               <strong>Maroon</strong>
@@ -340,7 +340,7 @@ const Info = () => {
   return (
     <>
       <HomeButton />
-      <Title title={'The AQI (Air Quality Index)'} />
+      <Title title={'US Air Quality Index'} />
       <Container>
         <Row className='d-flex justify-content-center mb-4'>
           <Col sm={12} md={8} xl={6}>

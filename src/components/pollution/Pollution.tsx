@@ -1,11 +1,19 @@
 import React, { useMemo } from 'react';
 import Container from 'react-bootstrap/Container';
+import { cnLevelsOfHealthConcern } from 'src/components/pollution/levelsOfHealthConcernCn';
+import {
+  usLevelsOfHealthConcern,
+  LevelOfHealthConcernContent,
+} from 'src/components/pollution/levelsOfHealthConcernUs';
 import { WeatherDataResponse } from 'src/types/types';
 import { Col, Row, Table } from 'react-bootstrap';
+import { between } from 'src/utils/between';
 
 interface Props {
   data?: WeatherDataResponse;
 }
+
+// TODO fix add space
 const Pollution: React.FC<Props> = props => {
   const { data } = props;
   const listValues = useMemo(() => {
@@ -46,6 +54,26 @@ const Pollution: React.FC<Props> = props => {
       </Table>
     );
   }, [data]);
+
+  const usPollutionInfo: LevelOfHealthConcernContent | null = useMemo(() => {
+    const currentAqiUs = data?.data.current.pollution.aqius || 0;
+    const [usInfo] = usLevelsOfHealthConcern.filter(item => {
+      const [min, max] = item.aqiRange;
+      return between(currentAqiUs, min, max);
+    }, []);
+    return usInfo;
+  }, [data?.data]);
+
+  const cnPollutionInfo: LevelOfHealthConcernContent | null = useMemo(() => {
+    const currentAqiUs = data?.data.current.pollution.aqius || 0;
+
+    const [cnInfo] = cnLevelsOfHealthConcern.filter(item => {
+      const [min, max] = item.aqiRange;
+      return between(currentAqiUs, min, max);
+    }, []);
+    return cnInfo;
+  }, [data?.data]);
+
   return (
     <>
       <Container className='d-flex justify-content-center mb-4'>
@@ -53,6 +81,38 @@ const Pollution: React.FC<Props> = props => {
           <h2>Pollution</h2>
         </Row>
       </Container>
+      {usPollutionInfo && (
+        <Container className='d-flex justify-content-center mb-4'>
+          <Row className={'text-center'}>
+            <h4 style={{ color: usPollutionInfo.color }}>
+              Current PM2.5 Concentration basing on{' '}
+              <strong>
+                <em>US Air Quality Index</em>
+              </strong>
+              indicates that air conditions are{' '}
+              <span className={'display-5 fw-bolder'}>
+                {usPollutionInfo.info}
+              </span>
+            </h4>
+          </Row>
+        </Container>
+      )}
+      {cnPollutionInfo && (
+        <Container className='d-flex justify-content-center mb-4'>
+          <Row className={'text-center'}>
+            <h4 style={{ color: cnPollutionInfo.color }}>
+              Current PM2.5 Concentration basing on{' '}
+              <strong>
+                <em>China Air Quality Index</em>
+              </strong>
+              indicates that air conditions are{' '}
+              <span className={'display-5 fw-bolder'}>
+                {cnPollutionInfo.info}
+              </span>
+            </h4>
+          </Row>
+        </Container>
+      )}
       <Container>
         <Row className='d-flex justify-content-center mb-4'>
           <Col sm={12} md={8} xl={6}>
