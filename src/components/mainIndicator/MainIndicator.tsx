@@ -3,10 +3,10 @@ import Container from 'react-bootstrap/Container';
 
 interface Props {}
 
-const MainIndicator: React.FC<Props> = props => {
+const MainIndicator: React.FC<Props> = () => {
   return (
     <Container className='p-5 mb-4'>
-      <h1 className='display-1 fw-bold'>Air Condition Status</h1>
+      <h1 className='display-1 fw-bold'>Air Conditions and Forecast</h1>
     </Container>
   );
 };

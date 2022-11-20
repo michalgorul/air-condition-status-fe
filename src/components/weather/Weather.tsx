@@ -29,7 +29,7 @@ const Weather: React.FC<Props> = props => {
         </thead>
         <tbody>
           <tr>
-            <td>Timestamp</td>
+            <td>Date</td>
             <td>{timestampString}</td>
           </tr>
           <tr>

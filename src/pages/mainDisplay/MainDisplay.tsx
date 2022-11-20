@@ -16,7 +16,7 @@ const MainDisplay: React.FC<Props> = () => {
           <Button className={'btn-sm'}>Info</Button>
         </NavLink>
       </Container>
-      <Title title={'Air Condition Status'} />
+      <Title title={'Air Conditions and Forecast'} />
       <LocationInput />
     </>
   );

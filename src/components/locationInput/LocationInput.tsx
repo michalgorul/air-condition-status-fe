@@ -15,15 +15,16 @@ export interface Coordinates {
   longitude?: number;
 }
 
-//TODO fix double click
 const LocationInput: React.FC<Props> = () => {
   const navigate = useNavigate();
   const [location, setLocation] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [blur, setBlur] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleGetCoordinates = useCallback((coords: Coordinates) => {
     setLocation(`${coords.latitude}, ${coords.longitude}`);
+    setError('');
   }, []);
 
   const handleChange = useCallback((event: FormEvent) => {
@@ -50,14 +51,17 @@ const LocationInput: React.FC<Props> = () => {
     (event: FormEvent) => {
       validate();
       event.preventDefault();
-      if (error) return;
+      if (error || !location) return;
       const [lat, lon] = location.split(',');
-      getCityDataCoordinates(lat.trim(), lon.trim()).then(response => {
-        navigate(
-          `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
-          { state: { weather: response.data } }
-        );
-      });
+      setLoading(true);
+      getCityDataCoordinates(lat.trim(), lon.trim())
+        .then(response => {
+          navigate(
+            `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
+            { state: { weather: response.data } }
+          );
+        })
+        .then(() => setLoading(false));
     },
     [error, location, navigate, validate]
   );
@@ -98,7 +102,12 @@ const LocationInput: React.FC<Props> = () => {
         ) : null}
         <Geolocation handleGetCoordinates={handleGetCoordinates} />
         <Container className={'d-flex justify-content-center'}>
-          <Button className={'btn-lg'} variant='primary' type='submit'>
+          <Button
+            className={'btn-lg'}
+            variant='primary'
+            type='submit'
+            disabled={loading}
+          >
             Submit
           </Button>
         </Container>

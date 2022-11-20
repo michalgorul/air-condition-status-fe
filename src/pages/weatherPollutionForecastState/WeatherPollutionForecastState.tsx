@@ -6,16 +6,21 @@ import HomeButton from 'src/atoms/homeButton/HomeButton';
 import Title from 'src/atoms/title/Title';
 import Pollution from 'src/components/pollution/Pollution';
 import Weather from 'src/components/weather/Weather';
-import { WeatherDataResponse } from 'src/types/types';
+import { ForecastResponse, WeatherDataResponse } from 'src/types/types';
+import Forecast from 'src/components/forecast/Forecast';
+import getForecast from 'src/api/openMeteo/getForecast';
 
 interface Props {}
 
-const WeatherPollutionState: React.FC<Props> = () => {
+const WeatherPollutionForecastState: React.FC<Props> = () => {
   const { state } = useLocation();
   const { country, state: cityState, city } = useParams();
   const [cityData, setCityData] = useState<WeatherDataResponse>();
-  const [requestSent, setRequestSent] = useState(false);
-  const getCity = useCallback(() => {
+  const [forecastData, setForecastData] = useState<ForecastResponse>();
+  const [requestPollutionSent, setRequestPollutionSent] = useState(false);
+  const [requestForecastSent, setRequestForecastSent] = useState(false);
+
+  const getPollutionData = useCallback(() => {
     if (!state) {
       getCityData(country || '', cityState || '', city || '').then(response => {
         setCityData(response.data);
@@ -23,12 +28,34 @@ const WeatherPollutionState: React.FC<Props> = () => {
     } else setCityData(state.weather);
   }, [city, cityState, country, state]);
 
-  useEffect(() => {
-    if (!requestSent) {
-      setRequestSent(true);
-      getCity();
+  const getForecastData = useCallback(() => {
+    if (cityData) {
+      const [lat, lon] = cityData.data.location.coordinates;
+      getForecast(lon.toString(), lat.toString()).then(response => {
+        setForecastData(response.data);
+      });
     }
-  }, [cityData, getCity, requestSent]);
+  }, [cityData]);
+
+  useEffect(() => {
+    if (!requestPollutionSent) {
+      setRequestPollutionSent(true);
+      getPollutionData();
+    }
+  }, [cityData, getPollutionData, requestPollutionSent]);
+
+  useEffect(() => {
+    if (!requestForecastSent && cityData) {
+      setRequestForecastSent(true);
+      getForecastData();
+    }
+  }, [
+    cityData,
+    getForecastData,
+    getPollutionData,
+    requestForecastSent,
+    requestPollutionSent,
+  ]);
   return (
     <>
       <HomeButton
@@ -45,8 +72,9 @@ const WeatherPollutionState: React.FC<Props> = () => {
       </Container>
       <Weather data={cityData} />
       <Pollution data={cityData} />
+      <Forecast data={forecastData} />
     </>
   );
 };
 
-export default WeatherPollutionState;
+export default WeatherPollutionForecastState;

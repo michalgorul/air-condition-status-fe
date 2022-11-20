@@ -31,7 +31,7 @@ const Pollution: React.FC<Props> = props => {
         </thead>
         <tbody>
           <tr>
-            <td>Timestamp</td>
+            <td>Date</td>
             <td>{timestampString}</td>
           </tr>
           <tr>
@@ -87,7 +87,7 @@ const Pollution: React.FC<Props> = props => {
             <h4 style={{ color: usPollutionInfo.color }}>
               Current PM2.5 Concentration basing on{' '}
               <strong>
-                <em>US Air Quality Index</em>
+                <em>US Air Quality Index</em>{' '}
               </strong>
               indicates that air conditions are{' '}
               <span className={'display-5 fw-bolder'}>
@@ -103,7 +103,7 @@ const Pollution: React.FC<Props> = props => {
             <h4 style={{ color: cnPollutionInfo.color }}>
               Current PM2.5 Concentration basing on{' '}
               <strong>
-                <em>China Air Quality Index</em>
+                <em>China Air Quality Index</em>{' '}
               </strong>
               indicates that air conditions are{' '}
               <span className={'display-5 fw-bolder'}>
