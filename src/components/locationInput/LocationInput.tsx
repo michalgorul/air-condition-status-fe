@@ -57,7 +57,6 @@ const LocationInput: React.FC<Props> = () => {
     } else setError('');
   }, [inputIsCoords, location]);
 
-  //TODO FIX FETCHING ALWAYS BY IP
   const handleSubmit = useCallback(
     (event: FormEvent) => {
       validate();
@@ -74,19 +73,22 @@ const LocationInput: React.FC<Props> = () => {
             );
           })
           .then(() => setLoading(false));
+      } else {
+        setLoading(true);
+        getGeocoding(location).then(response => {
+          getCityDataCoordinates(
+            response.data.latitude,
+            response.data.longitude
+          )
+            .then(response => {
+              navigate(
+                `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
+                { state: { weather: response.data } }
+              );
+            })
+            .then(() => setLoading(false));
+        });
       }
-
-      setLoading(true);
-      getGeocoding(location).then(response => {
-        getCityDataCoordinates(response.data.latitude, response.data.longitude)
-          .then(response => {
-            navigate(
-              `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
-              { state: { weather: response.data } }
-            );
-          })
-          .then(() => setLoading(false));
-      });
     },
     [error, inputIsCoords, location, navigate, validate]
   );
