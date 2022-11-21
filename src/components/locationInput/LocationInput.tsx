@@ -1,6 +1,7 @@
 import React, { FormEvent, useCallback, useState } from 'react';
 import { Button, FloatingLabel, Form } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
+import getGeocoding from 'src/api/ninjasGeocoding/getGeocoding';
 import Geolocation from 'src/atoms/geolocation/Geolocation';
 import getCityDataCoordinates from 'src/api/iqAir/getCityDataCoordinates';
 import { useNavigate } from 'react-router-dom';
@@ -34,36 +35,60 @@ const LocationInput: React.FC<Props> = () => {
     setLocation(value);
   }, []);
 
+  const inputIsCoords = useCallback(() => location.match(/^\d/), [location]);
+
   const validate = useCallback(() => {
     if (!location) {
       setError('Input is required');
       return;
     }
-    const regExpMatchArray = location.match(
+    const regExpMatchArrayCoords = location.match(
       '^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$'
     );
-    if (!regExpMatchArray) {
-      setError('Latitude and longitude must be entered separated by coma');
+    const regExpMatchArrayCity = location.match(
+      '^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$'
+    );
+    if (inputIsCoords()) {
+      if (!regExpMatchArrayCoords) {
+        setError('Latitude and longitude must be entered separated by coma');
+      }
+    } else if (!regExpMatchArrayCity) {
+      setError('Enter proper city name');
     } else setError('');
-  }, [location]);
+  }, [inputIsCoords, location]);
 
+  //TODO FIX FETCHING ALWAYS BY IP
   const handleSubmit = useCallback(
     (event: FormEvent) => {
       validate();
       event.preventDefault();
       if (error || !location) return;
-      const [lat, lon] = location.split(',');
+      if (inputIsCoords()) {
+        const [lat, lon] = location.split(',');
+        setLoading(true);
+        getCityDataCoordinates(lat.trim(), lon.trim())
+          .then(response => {
+            navigate(
+              `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
+              { state: { weather: response.data } }
+            );
+          })
+          .then(() => setLoading(false));
+      }
+
       setLoading(true);
-      getCityDataCoordinates(lat.trim(), lon.trim())
-        .then(response => {
-          navigate(
-            `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
-            { state: { weather: response.data } }
-          );
-        })
-        .then(() => setLoading(false));
+      getGeocoding(location).then(response => {
+        getCityDataCoordinates(response.data.latitude, response.data.longitude)
+          .then(response => {
+            navigate(
+              `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
+              { state: { weather: response.data } }
+            );
+          })
+          .then(() => setLoading(false));
+      });
     },
-    [error, location, navigate, validate]
+    [error, inputIsCoords, location, navigate, validate]
   );
 
   const handleBlur = useCallback(() => {

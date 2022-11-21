@@ -4,10 +4,9 @@ import { WeatherDataResponse } from 'src/types/types';
 const baseUrl = `${process.env.REACT_APP_BE_URL}`;
 
 const getCityDataCoordinates = async (lat: string, lon: string) => {
-  return axios.get<WeatherDataResponse>(
-    `${baseUrl}/nearest_city/${lat}/${lon}`,
-    {}
-  );
+  return axios.get<WeatherDataResponse>(`${baseUrl}/nearest_city`, {
+    params: { lat, lon },
+  });
 };
 
 export default getCityDataCoordinates;

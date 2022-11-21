@@ -107,3 +107,11 @@ export interface ForecastResponse {
   dailyUnits: DailyUnits;
   daily: Daily;
 }
+
+export interface GeocodingResponse {
+  name: string;
+  latitude: string;
+  longitude: string;
+  country: string;
+  state: string;
+}

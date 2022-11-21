@@ -8,10 +8,9 @@ const getNearestCityData = async (
   state: string,
   city: string
 ) => {
-  return axios.get<WeatherDataResponse>(
-    `${baseUrl}/city/${country}/${state}/${city}`,
-    {}
-  );
+  return axios.get<WeatherDataResponse>(`${baseUrl}/city`, {
+    params: { country, state, city },
+  });
 };
 
 export default getNearestCityData;
