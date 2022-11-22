@@ -6,6 +6,9 @@ import Geolocation from 'src/atoms/geolocation/Geolocation';
 import getCityDataCoordinates from 'src/api/iqAir/getCityDataCoordinates';
 import { useNavigate } from 'react-router-dom';
 
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
+
 interface Props {
   onChange?: () => void;
   onSubmit?: () => void;
@@ -46,7 +49,7 @@ const LocationInput: React.FC<Props> = () => {
       '^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$'
     );
     const regExpMatchArrayCity = location.match(
-      '^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$'
+      '^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$|([A-Za-z]+(?: [A-Za-z]+)*),? ([A-Za-z]*)'
     );
     if (inputIsCoords()) {
       if (!regExpMatchArrayCoords) {
@@ -57,6 +60,39 @@ const LocationInput: React.FC<Props> = () => {
     } else setError('');
   }, [inputIsCoords, location]);
 
+  const showErrorToast = useCallback(() => {
+    toast.error('City not found', {
+      position: 'top-center',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'colored',
+    });
+  }, []);
+
+  const getCityDataCoordinatesCallback = useCallback(
+    (lat: string, lon: string) => {
+      toast.loading('Please wait...');
+      getCityDataCoordinates(lat.trim(), lon.trim())
+        .then(response => {
+          setLoading(false);
+          navigate(
+            `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
+            { state: { weather: response.data } }
+          );
+        })
+        .catch(error => {
+          console.log(error);
+          setLoading(false);
+          showErrorToast();
+        });
+    },
+    [navigate, showErrorToast]
+  );
+
   const handleSubmit = useCallback(
     (event: FormEvent) => {
       validate();
@@ -65,32 +101,31 @@ const LocationInput: React.FC<Props> = () => {
       if (inputIsCoords()) {
         const [lat, lon] = location.split(',');
         setLoading(true);
-        getCityDataCoordinates(lat.trim(), lon.trim())
-          .then(response => {
-            navigate(
-              `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
-              { state: { weather: response.data } }
-            );
-          })
-          .then(() => setLoading(false));
+        getCityDataCoordinatesCallback(lat, lon);
       } else {
         setLoading(true);
-        getGeocoding(location).then(response => {
-          getCityDataCoordinates(
-            response.data.latitude,
-            response.data.longitude
-          )
-            .then(response => {
-              navigate(
-                `/cities/${response.data.data.country}/${response.data.data.state}/${response.data.data.city}`,
-                { state: { weather: response.data } }
-              );
-            })
-            .then(() => setLoading(false));
-        });
+        const [city, country] = location.split(',');
+        getGeocoding(city, country)
+          .then(response => {
+            const lat = response.data.latitude;
+            const lon = response.data.longitude;
+            getCityDataCoordinatesCallback(lat, lon);
+          })
+          .catch(error => {
+            console.log(error);
+            setLoading(false);
+            showErrorToast();
+          });
       }
     },
-    [error, inputIsCoords, location, navigate, validate]
+    [
+      error,
+      getCityDataCoordinatesCallback,
+      inputIsCoords,
+      location,
+      showErrorToast,
+      validate,
+    ]
   );
 
   const handleBlur = useCallback(() => {
@@ -104,6 +139,7 @@ const LocationInput: React.FC<Props> = () => {
 
   return (
     <>
+      <ToastContainer />
       <Form onSubmit={handleSubmit}>
         <Container className='d-flex justify-content-center mt-5'>
           <FloatingLabel
@@ -119,7 +155,9 @@ const LocationInput: React.FC<Props> = () => {
               onFocus={handleFocus}
               onBlur={handleBlur}
             />
-            <Form.Text className='text-muted'>Enter coordinates</Form.Text>
+            <Form.Text className='text-muted'>
+              Enter coordinates or city and country separated by comma
+            </Form.Text>
           </FloatingLabel>
         </Container>
         {error && blur ? (
