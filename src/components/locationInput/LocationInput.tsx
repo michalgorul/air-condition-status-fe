@@ -75,7 +75,6 @@ const LocationInput: React.FC<Props> = () => {
 
   const getCityDataCoordinatesCallback = useCallback(
     (lat: string, lon: string) => {
-      toast.loading('Please wait...');
       getCityDataCoordinates(lat.trim(), lon.trim())
         .then(response => {
           setLoading(false);
@@ -87,6 +86,7 @@ const LocationInput: React.FC<Props> = () => {
         .catch(error => {
           console.log(error);
           setLoading(false);
+          toast.dismiss();
           showErrorToast();
         });
     },
@@ -98,6 +98,7 @@ const LocationInput: React.FC<Props> = () => {
       validate();
       event.preventDefault();
       if (error || !location) return;
+      toast.loading('Please wait...');
       if (inputIsCoords()) {
         const [lat, lon] = location.split(',');
         setLoading(true);
@@ -114,6 +115,7 @@ const LocationInput: React.FC<Props> = () => {
           .catch(error => {
             console.log(error);
             setLoading(false);
+            toast.dismiss();
             showErrorToast();
           });
       }
