@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
+import { showErrorToast } from 'src/utils/toast';
 
 interface Props {
   onChange?: () => void;
@@ -60,19 +61,6 @@ const LocationInput: React.FC<Props> = () => {
     } else setError('');
   }, [inputIsCoords, location]);
 
-  const showErrorToast = useCallback(() => {
-    toast.error('City not found', {
-      position: 'top-center',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'colored',
-    });
-  }, []);
-
   const getCityDataCoordinatesCallback = useCallback(
     (lat: string, lon: string) => {
       getCityDataCoordinates(lat.trim(), lon.trim())
@@ -90,7 +78,7 @@ const LocationInput: React.FC<Props> = () => {
           showErrorToast();
         });
     },
-    [navigate, showErrorToast]
+    [navigate]
   );
 
   const handleSubmit = useCallback(
@@ -120,14 +108,7 @@ const LocationInput: React.FC<Props> = () => {
           });
       }
     },
-    [
-      error,
-      getCityDataCoordinatesCallback,
-      inputIsCoords,
-      location,
-      showErrorToast,
-      validate,
-    ]
+    [error, getCityDataCoordinatesCallback, inputIsCoords, location, validate]
   );
 
   const handleBlur = useCallback(() => {

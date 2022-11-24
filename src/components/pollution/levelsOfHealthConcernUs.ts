@@ -1,3 +1,6 @@
+import { cnLevelsOfHealthConcern } from 'src/components/pollution/levelsOfHealthConcernCn';
+import { between } from 'src/utils/between';
+
 export interface LevelOfHealthConcernContent {
   color: string;
   aqiRange: number[];
@@ -36,3 +39,21 @@ export const usLevelsOfHealthConcern: LevelOfHealthConcernContent[] = [
     info: 'Hazardous',
   },
 ];
+
+export const getCnColor = (value: number) => {
+  const [cnInfo] = cnLevelsOfHealthConcern.filter(item => {
+    const [min, max] = item.aqiRange;
+    return between(value, min, max);
+  }, []);
+
+  return cnInfo.color;
+};
+
+export const getUsColor = (value: number) => {
+  const [usInfo] = usLevelsOfHealthConcern.filter(item => {
+    const [min, max] = item.aqiRange;
+    return between(value, min, max);
+  }, []);
+
+  return usInfo.color;
+};

@@ -115,3 +115,18 @@ export interface GeocodingResponse {
   country: string;
   state: string;
 }
+
+export interface WeatherHistory {
+  id: string;
+  timestamp: Date;
+  city: string;
+  state: string;
+  country: string;
+  latitude: string;
+  longitude: string;
+  temperature: number;
+  pressure: number;
+  humidity: number;
+  aqius: number;
+  aqicn: number;
+}

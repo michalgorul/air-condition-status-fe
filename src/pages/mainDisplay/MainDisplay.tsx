@@ -12,6 +12,9 @@ const MainDisplay: React.FC<Props> = () => {
         <NavLink href={'/cities'}>
           <Button className={'btn-sm me-2'}>Available Cities</Button>
         </NavLink>
+        <NavLink href={'/history'}>
+          <Button className={'btn-sm me-2'}>History</Button>
+        </NavLink>
         <NavLink href={'/info'}>
           <Button className={'btn-sm'}>Info</Button>
         </NavLink>

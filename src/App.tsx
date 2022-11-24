@@ -6,12 +6,14 @@ import WeatherPollutionForecastState from 'src/pages/weatherPollutionForecastSta
 import './App.css';
 
 import MainDisplay from './pages/mainDisplay/MainDisplay';
+import History from 'src/pages/history/History';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<MainDisplay />} />
+        <Route path='/history' element={<History />} />
         <Route path='/info' element={<Info />} />
         <Route path='/cities' element={<Cities />} />
         <Route
