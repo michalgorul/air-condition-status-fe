@@ -12,8 +12,14 @@ import {
 import { Trash } from 'react-bootstrap-icons';
 import deleteHistoryEntry from 'src/api/weatherHistory/deleteHistoryEntry';
 import 'react-toastify/dist/ReactToastify.css';
-import { toast, ToastContainer } from 'react-toastify';
-import { showErrorToast, showSuccessToast } from 'src/utils/toast';
+import { ToastContainer } from 'react-toastify';
+import {
+  dismissToasts,
+  loadingToast,
+  showErrorToast,
+  showSuccessToast,
+} from 'src/utils/toast';
+import { AxiosError } from 'axios';
 
 interface Props {}
 
@@ -24,24 +30,28 @@ const History: React.FC<Props> = () => {
     if (historyData) return;
     getAllHistory()
       .then(r => setHistoryData(r.data))
-      .catch(err => console.error(err));
+      .catch((error: AxiosError) => {
+        console.log(error);
+        dismissToasts();
+        showErrorToast(error.message);
+      });
   }, [historyData]);
 
   const deleteRow = useCallback(
     (id: string) => {
-      toast.loading('Please wait...');
+      loadingToast();
       deleteHistoryEntry(id)
         .then(response => {
           if (response.status === 200 && response.data === 'success') {
             const filteredArray = historyData?.filter(i => i.id !== id);
             setHistoryData(filteredArray);
-            toast.dismiss();
+            dismissToasts();
             showSuccessToast();
           }
         })
         .catch(error => {
           console.error(error);
-          toast.dismiss();
+          dismissToasts();
           showErrorToast('History entry was not deleted');
         });
     },

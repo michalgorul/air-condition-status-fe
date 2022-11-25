@@ -7,8 +7,9 @@ import getCityDataCoordinates from 'src/api/iqAir/getCityDataCoordinates';
 import { useNavigate } from 'react-router-dom';
 
 import 'react-toastify/dist/ReactToastify.css';
-import { toast, ToastContainer } from 'react-toastify';
-import { showErrorToast } from 'src/utils/toast';
+import { ToastContainer } from 'react-toastify';
+import { dismissToasts, loadingToast, showErrorToast } from 'src/utils/toast';
+import { AxiosError } from 'axios';
 
 interface Props {
   onChange?: () => void;
@@ -71,11 +72,12 @@ const LocationInput: React.FC<Props> = () => {
             { state: { weather: response.data } }
           );
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
           console.log(error);
           setLoading(false);
-          toast.dismiss();
-          showErrorToast();
+          dismissToasts();
+          if (error.response) showErrorToast(error.response.statusText);
+          else showErrorToast(error.message);
         });
     },
     [navigate]
@@ -86,7 +88,7 @@ const LocationInput: React.FC<Props> = () => {
       validate();
       event.preventDefault();
       if (error || !location) return;
-      toast.loading('Please wait...');
+      loadingToast();
       if (inputIsCoords()) {
         const [lat, lon] = location.split(',');
         setLoading(true);
@@ -100,11 +102,12 @@ const LocationInput: React.FC<Props> = () => {
             const lon = response.data.longitude;
             getCityDataCoordinatesCallback(lat, lon);
           })
-          .catch(error => {
+          .catch((error: AxiosError) => {
             console.log(error);
             setLoading(false);
-            toast.dismiss();
-            showErrorToast();
+            dismissToasts();
+            if (error.response) showErrorToast(error.response.statusText);
+            else showErrorToast(error.message);
           });
       }
     },
