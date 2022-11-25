@@ -9,7 +9,7 @@ import {
   getCnColor,
   getUsColor,
 } from 'src/components/pollution/levelsOfHealthConcernUs';
-import { Trash } from 'react-bootstrap-icons';
+import { ArrowDownShort, ArrowUpShort, Trash } from 'react-bootstrap-icons';
 import deleteHistoryEntry from 'src/api/weatherHistory/deleteHistoryEntry';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
@@ -21,15 +21,38 @@ import {
 } from 'src/utils/toast';
 import { AxiosError } from 'axios';
 
+type TableOptions = Map<string, 'ASC' | 'DESC' | undefined>;
+
+const initValues: [string, 'ASC' | 'DESC' | undefined][] = [
+  ['timestamp', undefined],
+  ['city', undefined],
+  ['state', undefined],
+  ['country', undefined],
+  ['latitude', undefined],
+  ['longitude', undefined],
+  ['temperature', undefined],
+  ['pressure', undefined],
+  ['humidity', undefined],
+  ['aqius', undefined],
+  ['aqicn', undefined],
+];
+
+const initState: TableOptions = new Map(initValues);
+
 interface Props {}
 
 const History: React.FC<Props> = () => {
   const [historyData, setHistoryData] = useState<WeatherHistory[]>();
+  const [sort, setSort] = useState(0);
+  const [options] = useState<TableOptions>(initState);
 
   useEffect(() => {
     if (historyData) return;
     getAllHistory()
-      .then(r => setHistoryData(r.data))
+      .then(r => {
+        setHistoryData(r.data);
+        return r.data;
+      })
       .catch((error: AxiosError) => {
         console.log(error);
         dismissToasts();
@@ -58,6 +81,35 @@ const History: React.FC<Props> = () => {
     [historyData]
   );
 
+  const sortBy = useCallback(
+    (key: keyof WeatherHistory) => {
+      const option = options.get(key);
+      const order = option === 'DESC' || !option ? [1, -1] : [-1, 1];
+      const sorted = historyData?.sort((a, b) =>
+        a[key] < b[key] ? order[0] : order[1]
+      );
+      setHistoryData(sorted);
+      setSort(sort + 1);
+      initValues.forEach(i => options.set(i[0], i[1]));
+      if (option === 'DESC' || !option) options.set(key, 'ASC');
+      else options.set(key, 'DESC');
+    },
+    [historyData, options, sort]
+  );
+
+  const showArrow = useCallback(
+    (key: keyof WeatherHistory) => {
+      const option = options.get(key);
+      if (!option) return <></>;
+      return option === 'ASC' ? (
+        <ArrowDownShort className={'ms-1'} />
+      ) : (
+        <ArrowUpShort className={'ms-1'} />
+      );
+    },
+    [options]
+  );
+
   const fillRows = useMemo(() => {
     if (!historyData) return;
     return historyData.map(h => {
@@ -80,7 +132,7 @@ const History: React.FC<Props> = () => {
         </>
       );
     });
-  }, [deleteRow, historyData]);
+  }, [deleteRow, historyData, sort]);
 
   const showTable = useCallback(() => {
     return (
@@ -88,15 +140,42 @@ const History: React.FC<Props> = () => {
         <Table striped bordered hover>
           <thead>
             <tr className={'text-center'}>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Country</th>
-              <th>City</th>
-              <th>Temperature</th>
-              <th>Pressure</th>
-              <th>Humidity</th>
-              <th>AQI US</th>
-              <th>AQI China</th>
+              <th role={'button'} onClick={() => sortBy('timestamp')}>
+                Date
+                {showArrow('timestamp')}
+              </th>
+              <th role={'button'} onClick={() => sortBy('timestamp')}>
+                Time
+                {showArrow('timestamp')}
+              </th>
+              <th role={'button'} onClick={() => sortBy('country')}>
+                Country
+                {showArrow('country')}
+              </th>
+              <th role={'button'} onClick={() => sortBy('city')}>
+                City
+                {showArrow('city')}
+              </th>
+              <th role={'button'} onClick={() => sortBy('temperature')}>
+                Temperature
+                {showArrow('temperature')}
+              </th>
+              <th role={'button'} onClick={() => sortBy('pressure')}>
+                Pressure
+                {showArrow('pressure')}
+              </th>
+              <th role={'button'} onClick={() => sortBy('humidity')}>
+                Humidity
+                {showArrow('humidity')}
+              </th>
+              <th role={'button'} onClick={() => sortBy('aqius')}>
+                AQI US
+                {showArrow('aqius')}
+              </th>
+              <th role={'button'} onClick={() => sortBy('aqicn')}>
+                AQI China
+                {showArrow('aqicn')}
+              </th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -104,7 +183,7 @@ const History: React.FC<Props> = () => {
         </Table>
       </>
     );
-  }, [fillRows]);
+  }, [fillRows, showArrow, sortBy]);
 
   return (
     <>

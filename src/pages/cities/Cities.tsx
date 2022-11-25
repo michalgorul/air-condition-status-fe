@@ -20,7 +20,8 @@ const Cities: React.FC<Props> = () => {
       .catch((error: AxiosError) => {
         console.log(error);
         dismissToasts();
-        showErrorToast(error.message);
+        if (error.response) showErrorToast(error.response.statusText);
+        else showErrorToast(error.message);
       });
   }, []);
 
