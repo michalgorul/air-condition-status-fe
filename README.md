@@ -1,46 +1,34 @@
-# Getting Started with Create React App
+# Air condition status
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A web application that allows you to check the current weather and air quality anywhere in the world. It also provides the ability to review historical data, which is saved in real time to a PostgreSQL database. It also provides the necessary knowledge of recommended air quality indicators recognized by the WHO as well as the People's Republic of China. The server part was written using Python version 3.10 and frameworks such as FastAPI and SQLAlchemy. The black library and mypy were used to keep the code clean. The Pydantic library was used to validate data and manage environment variables. Part of the user view was made using the free and open-sourced React library and TypeScript.
 
-## Available Scripts
+## How it works
 
-In the project directory, you can run:
+The service part including the database was loaded into the container using Dockerfile and docker-compose.yml. The free [IQAir api](https://www.iqair.com/air-pollution-data-api) was used to retrieve data on the current weather condition. The application also uses a functionality called Address geocoding. For this a free API called [API ninjas](https://api-ninjas.com/api/geocoding) was used. The last functionality that the described application offers is a weather forecast for the upcoming week. To download this data, the [Open-Meteo](https://open-meteo.com/en) platform was chosen.
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+To run the service part, start the terminal in the root directory and execute the command: 
+```bash
+docker-compose up.
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+If Docker is not installed, this can be done using the instructions provided by its distributor on the site: 
+ - https://docs.docker.com/desktop/install/linux-install/
 
-### `npm test`
+To run the user interface part, start a terminal in the root directory and execute the commands: 
+```bash
+npm install
+npm start
+```
+If npm is not installed this can be done by using the instructions on the manufacturer's website at: https://nodejs.org/en/
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## How it works from the customer side
 
-### `npm run build`
+The application's client has the ability to obtain information about the current state of the weather and the quality of the air condition. He can do this by entering the city, town and country in which it is located, separating the two data with a comma, or entering the coordinates of the place he is looking for, also separating the two data with a comma, starting from entering the latitude and then the longitude. After pressing the 'Submit' button in the view or 'Enter' on the keyboard, the user is redirected to the second view, which contains all the necessary information mentioned above. The user can also, after pressing the 'Available cities' button, obtain information about the placed control stations in Poland. This data is displayed in the form of a table. After clicking on a row, he is redirected to the view of full weather information. To check the search history, press the 'History' button. The history is displayed in the form of a sortable table. Sorting can be used on any column by clicking on the header.  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## App look
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Documentation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+The API documentation is available at: `http://localhost:8000/docs`
